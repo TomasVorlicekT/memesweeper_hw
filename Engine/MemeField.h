@@ -27,7 +27,7 @@ private:
 		bool IsRevealed() const;
 		void ToggleFlag();
 		bool IsFlagged() const;
-		void Draw(Graphics& gfx, const Vei2& screenPos) const;
+		void Draw(Graphics& gfx, bool isFucked, const Vei2& screenPos) const;
 		void SetNeighborMemeCount(int nMemeCount);
 
 	private:
@@ -50,9 +50,10 @@ private:
 	int CountNeighborMemes(const Vei2& gridPos) const;
 
 private:
-	static constexpr int width = 16;
+	static constexpr int width = 20;
 	static constexpr int height = 20;
 	Tile field[width * height];
+	bool isFucked{ false };
 
 };
 
