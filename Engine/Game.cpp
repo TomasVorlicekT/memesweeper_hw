@@ -39,6 +39,29 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+
+	while (!wnd.mouse.IsEmpty())
+	{
+		const Mouse::Event mouseEvent = wnd.mouse.Read();
+		Vei2 mousePosition = mouseEvent.GetPos();
+		if (mouseEvent.GetType() == Mouse::Event::Type::LPress)
+		{
+			
+			if (field.GetRect().Contains(mousePosition))
+			{
+				field.OnRevealClick(mousePosition);
+			}
+		}
+
+		if (mouseEvent.GetType() == Mouse::Event::Type::RPress)
+		{
+			if (field.GetRect().Contains(mousePosition))
+			{
+				field.OnFlagClick(mousePosition);
+			}
+		}
+
+	}
 }
 
 void Game::ComposeFrame()

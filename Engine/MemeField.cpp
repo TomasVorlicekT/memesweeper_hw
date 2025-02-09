@@ -89,14 +89,14 @@ MemeField::MemeField(int nMemes)
 		TileAt(spawnPos).SpawnMeme();
 	}
 
-	for (int reveal = 0; reveal < 50; reveal++)
-	{
-		Vei2 revealLoc = { xDist(rng), yDist(rng) };
-		if (!TileAt(revealLoc).IsRevealed())
-		{
-			TileAt(revealLoc).Reveal();
-		};
-	}
+	//for (int reveal = 0; reveal < 50; reveal++)
+	//{
+	//	Vei2 revealLoc = { xDist(rng), yDist(rng) };
+	//	if (!TileAt(revealLoc).IsRevealed())
+	//	{
+	//		TileAt(revealLoc).Reveal();
+	//	};
+	//}
 
 }
 
@@ -119,6 +119,34 @@ RectI MemeField::GetRect() const
 	return RectI(0, width * SpriteCodex::tileSize, 0, height * SpriteCodex::tileSize);
 }
 
+void MemeField::OnRevealClick(const Vei2& screenPos)
+{
+	RectI playScreenArea = GetRect();
+	assert( screenPos.x >= playScreenArea.left &&
+			screenPos.x < playScreenArea.right &&
+			screenPos.y >= playScreenArea.top &&
+			screenPos.y < playScreenArea.bottom);
+
+	if (!TileAt(ScreenToGrid(screenPos)).IsRevealed() && !TileAt(ScreenToGrid(screenPos)).IsFlagged())
+	{
+		TileAt(ScreenToGrid(screenPos)).Reveal();
+	}
+}
+
+void MemeField::OnFlagClick(const Vei2& screenPos)
+{
+	RectI playScreenArea = GetRect();
+	assert(screenPos.x >= playScreenArea.left &&
+		screenPos.x < playScreenArea.right &&
+		screenPos.y >= playScreenArea.top &&
+		screenPos.y < playScreenArea.bottom);
+
+	if (!TileAt(ScreenToGrid(screenPos)).IsRevealed())
+	{
+		TileAt(ScreenToGrid(screenPos)).ToggleFlag();
+	}
+}
+
 MemeField::Tile& MemeField::TileAt(const Vei2 & gridPos)
 {
 	return field[gridPos.y * width + gridPos.x];
@@ -127,4 +155,9 @@ MemeField::Tile& MemeField::TileAt(const Vei2 & gridPos)
 const MemeField::Tile& MemeField::TileAt(const Vei2& gridPos) const
 {
 	return field[gridPos.y * width + gridPos.x];
+}
+
+Vei2 MemeField::ScreenToGrid(const Vei2& screenPos) const
+{
+	return Vei2(screenPos / SpriteCodex::tileSize);
 }
