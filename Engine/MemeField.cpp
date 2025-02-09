@@ -1,4 +1,5 @@
 #include "MemeField.h"
+#include <algorithm>
 
 void MemeField::Tile::SpawnMeme()
 {
@@ -61,11 +62,17 @@ void MemeField::Tile::Draw(Graphics& gfx, const Vei2& screenPos) const
 		}
 		else
 		{
-			SpriteCodex::DrawTile0(screenPos, gfx);
+			SpriteCodex::DrawTileNumber(screenPos, nNeighborMemes, gfx);
 		}
 		break;
 
 	}
+}
+
+void MemeField::Tile::SetNeighborMemeCount(int nMemeCount)
+{
+	assert(nNeighborMemes == -1);
+	nNeighborMemes = nMemeCount;
 }
 
 MemeField::MemeField(int nMemes)
@@ -89,14 +96,15 @@ MemeField::MemeField(int nMemes)
 		TileAt(spawnPos).SpawnMeme();
 	}
 
-	//for (int reveal = 0; reveal < 50; reveal++)
-	//{
-	//	Vei2 revealLoc = { xDist(rng), yDist(rng) };
-	//	if (!TileAt(revealLoc).IsRevealed())
-	//	{
-	//		TileAt(revealLoc).Reveal();
-	//	};
-	//}
+	for (Vei2 startPos = { 0, 0 }; startPos.y < height; startPos.y++)
+	{
+		for (startPos.x = 0; startPos.x < width; startPos.x++)
+		{
+			Vei2 gridPositionCurrent = { startPos.x, startPos.y };
+			int nMemes = CountNeighborMemes(gridPositionCurrent);
+			TileAt(gridPositionCurrent).SetNeighborMemeCount(nMemes);
+		}
+	}
 
 }
 
@@ -160,4 +168,27 @@ const MemeField::Tile& MemeField::TileAt(const Vei2& gridPos) const
 Vei2 MemeField::ScreenToGrid(const Vei2& screenPos) const
 {
 	return Vei2(screenPos / SpriteCodex::tileSize);
+}
+
+int MemeField::CountNeighborMemes(const Vei2& gridPos) const
+{
+	int count = 0;
+
+	int xStart = std::max(0, gridPos.x - 1);
+	int yStart = std::max(0, gridPos.y - 1);
+	int xEnd = std::min(width - 1, gridPos.x + 1);
+	int yEnd = std::min(height - 1, gridPos.y + 1);
+
+	for (Vei2 start = { xStart, yStart }; start.y <= yEnd; start.y++)
+	{
+		for (start.x = xStart; start.x <= xEnd; start.x++)
+		{
+			if (TileAt(start).HasMeme())
+			{
+				count++;
+			}
+		}
+	}
+
+	return count;
 }

@@ -28,10 +28,12 @@ private:
 		void ToggleFlag();
 		bool IsFlagged() const;
 		void Draw(Graphics& gfx, const Vei2& screenPos) const;
+		void SetNeighborMemeCount(int nMemeCount);
 
 	private:
 		bool hasMeme{ false };
 		State state{ State::Hidden };
+		int nNeighborMemes = -1; // -1 means uninitialized
 	};
 
 public:
@@ -45,6 +47,7 @@ private:
 	Tile& TileAt(const Vei2& gridPos);
 	const Tile& TileAt(const Vei2& gridPos) const;
 	Vei2 ScreenToGrid(const Vei2& screenPos) const;
+	int CountNeighborMemes(const Vei2& gridPos) const;
 
 private:
 	static constexpr int width = 16;
