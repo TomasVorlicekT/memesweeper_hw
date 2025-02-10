@@ -42,6 +42,7 @@ public:
 	RectI GetRect() const;
 	void OnRevealClick(const Vei2& screenPos);
 	void OnFlagClick(const Vei2& screenPos);
+	Vei2 GetStartPosition() const;
 
 private:
 	Tile& TileAt(const Vei2& gridPos);
