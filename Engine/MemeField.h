@@ -44,6 +44,8 @@ public:
 	void OnFlagClick(const Vei2& screenPos);
 	Vei2 GetStartPosition() const;
 	bool IsGameWon() const;
+	static Vei2 GetCenterPositionPixels();
+	bool IsFucked() const;
 
 private:
 	Tile& TileAt(const Vei2& gridPos);
@@ -52,8 +54,8 @@ private:
 	int CountNeighborMemes(const Vei2& gridPos) const;
 
 private:
-	static constexpr int width = 20;
-	static constexpr int height = 20;
+	static constexpr int width = 5;
+	static constexpr int height = 5;
 	Tile field[width * height];
 	bool isFucked{ false };
 

@@ -25,7 +25,8 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	field(45)
+	field(2),
+	gameOverSound(L"spayed.wav")
 {
 }
 
@@ -39,7 +40,7 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	if (field.IsGameWon())
+	if (!field.IsGameWon())
 	{
 		while (!wnd.mouse.IsEmpty())
 		{
@@ -70,11 +71,18 @@ void Game::ComposeFrame()
 {
 	if (field.IsGameWon())
 	{
-		
+		field.Draw(gfx);
+		SpriteCodex::DrawWin(MemeField::GetCenterPositionPixels(), gfx);
+
 	}
 	else
 	{
 		field.Draw(gfx);
+		if (field.IsFucked() && !gameOverSoundPlayed)
+		{
+			gameOverSound.Play();
+			gameOverSoundPlayed = true;
+		}
 	}
 
 }

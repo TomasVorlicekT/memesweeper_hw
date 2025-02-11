@@ -267,7 +267,7 @@ Vei2 MemeField::GetStartPosition() const
 // Checks whether all win conditions are set
 bool MemeField::IsGameWon() const
 {
-	bool isWon = false;
+	bool isWon = true;
 
 	for (Vei2 startPos = { 0, 0 }; startPos.y < height; startPos.y++)
 	{
@@ -275,11 +275,8 @@ bool MemeField::IsGameWon() const
 		{
 			Vei2 gridPositionCurrent = { startPos.x, startPos.y };
 
-			if (TileAt(gridPositionCurrent).HasMeme() && TileAt(gridPositionCurrent).IsFlagged())
-			{
-				isWon = true;
-			}
-			else if (!TileAt(gridPositionCurrent).HasMeme() && TileAt(gridPositionCurrent).IsFlagged())
+			if ( (TileAt(gridPositionCurrent).HasMeme() && !TileAt(gridPositionCurrent).IsFlagged()) ||
+				(!TileAt(gridPositionCurrent).HasMeme() && TileAt(gridPositionCurrent).IsFlagged()))
 			{
 				isWon = false;
 			}
@@ -287,4 +284,14 @@ bool MemeField::IsGameWon() const
 	}
 
 	return isWon;
+}
+
+Vei2 MemeField::GetCenterPositionPixels()
+{
+	return Vei2(Graphics::ScreenWidth / 2, Graphics::ScreenHeight / 2 );
+}
+
+bool MemeField::IsFucked() const
+{
+	return isFucked;
 }

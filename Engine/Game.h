@@ -24,6 +24,7 @@
 #include "Mouse.h"
 #include "Graphics.h"
 #include "MemeField.h"
+#include "Sound.h"
 
 class Game
 {
@@ -44,5 +45,7 @@ private:
 	/********************************/
 	/*  User Variables              */
 	MemeField field;
+	Sound gameOverSound;
+	bool gameOverSoundPlayed = false;
 	/********************************/
 };
