@@ -263,3 +263,28 @@ Vei2 MemeField::GetStartPosition() const
 
 	return startPos;
 }
+
+// Checks whether all win conditions are set
+bool MemeField::IsGameWon() const
+{
+	bool isWon = false;
+
+	for (Vei2 startPos = { 0, 0 }; startPos.y < height; startPos.y++)
+	{
+		for (startPos.x = 0; startPos.x < width; startPos.x++)
+		{
+			Vei2 gridPositionCurrent = { startPos.x, startPos.y };
+
+			if (TileAt(gridPositionCurrent).HasMeme() && TileAt(gridPositionCurrent).IsFlagged())
+			{
+				isWon = true;
+			}
+			else if (!TileAt(gridPositionCurrent).HasMeme() && TileAt(gridPositionCurrent).IsFlagged())
+			{
+				isWon = false;
+			}
+		}
+	}
+
+	return isWon;
+}

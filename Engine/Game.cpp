@@ -39,32 +39,42 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-
-	while (!wnd.mouse.IsEmpty())
+	if (field.IsGameWon())
 	{
-		const Mouse::Event mouseEvent = wnd.mouse.Read();
-		Vei2 mousePosition = mouseEvent.GetPos();
-		if (mouseEvent.GetType() == Mouse::Event::Type::LPress)
+		while (!wnd.mouse.IsEmpty())
 		{
-			
-			if (field.GetRect().Contains(mousePosition))
+			const Mouse::Event mouseEvent = wnd.mouse.Read();
+			Vei2 mousePosition = mouseEvent.GetPos();
+			if (mouseEvent.GetType() == Mouse::Event::Type::LPress)
 			{
-				field.OnRevealClick(mousePosition);
-			}
-		}
 
-		if (mouseEvent.GetType() == Mouse::Event::Type::RPress)
-		{
-			if (field.GetRect().Contains(mousePosition))
+				if (field.GetRect().Contains(mousePosition))
+				{
+					field.OnRevealClick(mousePosition);
+				}
+			}
+
+			if (mouseEvent.GetType() == Mouse::Event::Type::RPress)
 			{
-				field.OnFlagClick(mousePosition);
+				if (field.GetRect().Contains(mousePosition))
+				{
+					field.OnFlagClick(mousePosition);
+				}
 			}
-		}
 
+		}
 	}
 }
 
 void Game::ComposeFrame()
 {
-	field.Draw(gfx);
+	if (field.IsGameWon())
+	{
+		
+	}
+	else
+	{
+		field.Draw(gfx);
+	}
+
 }
