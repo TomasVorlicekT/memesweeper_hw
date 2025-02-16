@@ -9,6 +9,14 @@
 
 class MemeField 
 {
+public:
+	enum class State
+	{
+		Fucked,
+		Winrar,
+		Memeing
+	};
+
 private:
 	class Tile
 	{
@@ -27,7 +35,7 @@ private:
 		bool IsRevealed() const;
 		void ToggleFlag();
 		bool IsFlagged() const;
-		void Draw(Graphics& gfx, bool isFucked, const Vei2& screenPos) const;
+		void Draw(Graphics& gfx, MemeField::State state, const Vei2& screenPos) const;
 		void SetNeighborMemeCount(int nMemeCount);
 
 	private:
@@ -36,6 +44,7 @@ private:
 		int nNeighborMemes = -1; // -1 means uninitialized
 	};
 
+
 public:
 	MemeField(int nMemes);
 	void Draw(Graphics& gfx) const;
@@ -43,21 +52,21 @@ public:
 	void OnRevealClick(const Vei2& screenPos);
 	void OnFlagClick(const Vei2& screenPos);
 	Vei2 GetStartPosition() const;
-	bool IsGameWon() const;
 	static Vei2 GetCenterPositionPixels();
-	bool IsFucked() const;
+	State GetState() const;
 
 private:
 	Tile& TileAt(const Vei2& gridPos);
 	const Tile& TileAt(const Vei2& gridPos) const;
 	Vei2 ScreenToGrid(const Vei2& screenPos) const;
 	int CountNeighborMemes(const Vei2& gridPos) const;
+	bool IsGameWon() const;
 
 private:
 	static constexpr int width = 5;
 	static constexpr int height = 5;
 	Tile field[width * height];
-	bool isFucked{ false };
+	State state = State::Memeing;
 
 };
 

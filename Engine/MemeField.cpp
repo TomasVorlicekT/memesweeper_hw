@@ -42,9 +42,9 @@ bool MemeField::Tile::IsFlagged() const
 	return state == State::Flagged;
 }
 
-void MemeField::Tile::Draw(Graphics& gfx, bool isFucked, const Vei2& screenPos) const
+void MemeField::Tile::Draw(Graphics& gfx, MemeField::State fieldState, const Vei2& screenPos) const
 {
-	if (!isFucked)
+	if (fieldState != MemeField::State::Fucked)
 	{
 		switch (state)
 		{
@@ -163,7 +163,7 @@ void MemeField::Draw(Graphics& gfx) const
 		for (startPos.x = 0; startPos.x < width; startPos.x++)
 		{
 			Vei2 gridPositionCurrent = { startPos.x, startPos.y };
-			TileAt(gridPositionCurrent).Draw(gfx, isFucked, (gridPositionCurrent + GetStartPosition()) * SpriteCodex::tileSize);
+			TileAt(gridPositionCurrent).Draw(gfx, state, (gridPositionCurrent + GetStartPosition()) * SpriteCodex::tileSize);
 		}
 	}
 }
@@ -185,7 +185,7 @@ void MemeField::OnRevealClick(const Vei2& screenPos)
 			screenPos.y >= playScreenArea.top &&
 			screenPos.y < playScreenArea.bottom);
 
-	if (!isFucked)
+	if (state == State::Memeing)
 	{
 		if (!TileAt(ScreenToGrid(screenPos)).IsRevealed() && !TileAt(ScreenToGrid(screenPos)).IsFlagged())
 		{
@@ -193,7 +193,11 @@ void MemeField::OnRevealClick(const Vei2& screenPos)
 
 			if (TileAt(ScreenToGrid(screenPos)).HasMeme())
 			{
-				isFucked = true;
+				state = State::Fucked;
+			}
+			else if (IsGameWon())
+			{
+				state = State::Winrar;
 			}
 		}
 	};
@@ -207,7 +211,7 @@ void MemeField::OnFlagClick(const Vei2& screenPos)
 		screenPos.y >= playScreenArea.top &&
 		screenPos.y < playScreenArea.bottom);
 	
-	if (!isFucked)
+	if (state == State::Memeing)
 	{
 		if (!TileAt(ScreenToGrid(screenPos)).IsRevealed())
 		{
@@ -264,26 +268,18 @@ Vei2 MemeField::GetStartPosition() const
 	return startPos;
 }
 
-// Checks whether all win conditions are set
+// Checks whether all win conditions are met
 bool MemeField::IsGameWon() const
 {
-	bool isWon = true;
-
-	for (Vei2 startPos = { 0, 0 }; startPos.y < height; startPos.y++)
+	for (const Tile& tile : field)
 	{
-		for (startPos.x = 0; startPos.x < width; startPos.x++)
+		if (!tile.HasMeme() && !tile.IsRevealed())
 		{
-			Vei2 gridPositionCurrent = { startPos.x, startPos.y };
-
-			if ( (TileAt(gridPositionCurrent).HasMeme() && !TileAt(gridPositionCurrent).IsFlagged()) ||
-				(!TileAt(gridPositionCurrent).HasMeme() && TileAt(gridPositionCurrent).IsFlagged()))
-			{
-				isWon = false;
-			}
+			return false;
 		}
 	}
 
-	return isWon;
+	return true;
 }
 
 Vei2 MemeField::GetCenterPositionPixels()
@@ -291,7 +287,7 @@ Vei2 MemeField::GetCenterPositionPixels()
 	return Vei2(Graphics::ScreenWidth / 2, Graphics::ScreenHeight / 2 );
 }
 
-bool MemeField::IsFucked() const
+MemeField::State MemeField::GetState() const
 {
-	return isFucked;
+	return state;
 }

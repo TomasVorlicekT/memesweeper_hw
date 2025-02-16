@@ -40,12 +40,12 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	if (!field.IsGameWon())
+	while (!wnd.mouse.IsEmpty())
 	{
-		while (!wnd.mouse.IsEmpty())
+		const Mouse::Event mouseEvent = wnd.mouse.Read();
+		Vei2 mousePosition = mouseEvent.GetPos();
+		if (field.GetState() == MemeField::State::Memeing)
 		{
-			const Mouse::Event mouseEvent = wnd.mouse.Read();
-			Vei2 mousePosition = mouseEvent.GetPos();
 			if (mouseEvent.GetType() == Mouse::Event::Type::LPress)
 			{
 
@@ -62,23 +62,22 @@ void Game::UpdateModel()
 					field.OnFlagClick(mousePosition);
 				}
 			}
-
 		}
+
 	}
 }
 
 void Game::ComposeFrame()
 {
-	if (field.IsGameWon())
+	field.Draw(gfx);
+	if (field.GetState() == MemeField::State::Winrar)
 	{
-		field.Draw(gfx);
 		SpriteCodex::DrawWin(MemeField::GetCenterPositionPixels(), gfx);
 
 	}
 	else
 	{
-		field.Draw(gfx);
-		if (field.IsFucked() && !gameOverSoundPlayed)
+		if (field.GetState() == MemeField::State::Fucked && !gameOverSoundPlayed)
 		{
 			gameOverSound.Play();
 			gameOverSoundPlayed = true;
